@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>io.github.hchafai</groupId>
+    <artifactId>weka-sem</artifactId>
+    <version>0.2.0</version>
+    <name>CompositeSEM for Weka</name>
+    <description>Composite path modeling and maximum-likelihood covariance SEM for Weka</description>
+    <url>https://github.com/hchafai/weka-sem</url>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License v3.0 or later</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Hicham CHAFAI</name>
+            <email>chafaihicham@gmail.com</email>
+        </developer>
+    </developers>
+
+    <properties>
+        <maven.compiler.release>17</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <weka.artifactId>weka-stable</weka.artifactId>
+        <weka.version>3.8.7</weka.version>
+        <junit.version>5.13.4</junit.version>
+        <assertj.version>3.27.6</assertj.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>nz.ac.waikato.cms.weka</groupId>
+            <artifactId>${weka.artifactId}</artifactId>
+            <version>${weka.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.googlecode.matrix-toolkits-java</groupId>
+                    <artifactId>mtj</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.sourceforge.f2j</groupId>
+                    <artifactId>arpack_combined_all</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.googlecode.netlib-java</groupId>
+                    <artifactId>netlib-java</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.github.fracpete</groupId>
+                    <artifactId>jfilechooser-bookmarks</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.github.fracpete</groupId>
+                    <artifactId>jclipboardhelper</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.formdev</groupId>
+                    <artifactId>flatlaf</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>CompositeSEM</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.14.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.4</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.2</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Implementation-Title>Composite and covariance SEM for Weka</Implementation-Title>
+                            <Implementation-Version>${project.version}</Implementation-Version>
+                            <Implementation-Vendor>Hicham CHAFAI</Implementation-Vendor>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

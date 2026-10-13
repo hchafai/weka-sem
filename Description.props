@@ -1,0 +1,14 @@
+# Weka package metadata
+PackageName=CompositeSEM
+Version=0.2.0
+Date=2026-10-13
+Title=Composite path modeling and covariance SEM for Weka
+Category=Regression, Preprocessing
+Author=Hicham CHAFAI <chafaihicham@gmail.com>
+Maintainer=Hicham CHAFAI <chafaihicham@gmail.com>
+License=file LICENSE
+Description=CompositeSEM provides two distinct estimators: a configurable fixed-weight composite path model and a maximum-likelihood covariance SEM for reflective latent predictors with one observed numeric outcome. It includes supervised filters, Weka regressors, factor scores, covariance fit indices, serialization, command-line options, Explorer discovery and leakage-safe cross-validation. The package requires Java 17 or later. The composite estimator is not canonical iterative PLS-PM; the covariance estimator currently supports simple reflective measurement structures and paths from all latent constructs to the numeric class.
+Changes=Version 0.2.0 adds maximum-likelihood covariance SEM, regression factor scores, chi-square, CFI, TLI, RMSEA, SRMR, AIC and BIC while retaining the fixed-weight composite estimator.
+PackageURL=https://github.com/hchafai/weka-sem/releases/download/v0.2.0/CompositeSEM-0.2.0.zip
+URL=https://github.com/hchafai/weka-sem
+Depends=weka (>=3.8.7)
