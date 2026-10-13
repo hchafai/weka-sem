@@ -6,7 +6,7 @@
 
     <groupId>io.github.hchafai</groupId>
     <artifactId>weka-sem</artifactId>
-    <version>0.2.0</version>
+    <version>0.3.0</version>
     <name>CompositeSEM for Weka</name>
     <description>Composite path modeling and maximum-likelihood covariance SEM for Weka</description>
     <url>https://github.com/hchafai/weka-sem</url>
@@ -33,6 +33,7 @@
         <weka.version>3.8.7</weka.version>
         <junit.version>5.13.4</junit.version>
         <assertj.version>3.27.6</assertj.version>
+        <partial-least-squares.version>1.0.5</partial-least-squares.version>
     </properties>
 
     <dependencies>
@@ -80,6 +81,36 @@
             <version>${assertj.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>nz.ac.waikato.cms.weka</groupId>
+            <artifactId>partialLeastSquares</artifactId>
+            <version>${partial-least-squares.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>nz.ac.waikato.cms.weka</groupId>
+                    <artifactId>weka-dev</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.matrix-toolkits-java</groupId>
+            <artifactId>mtj</artifactId>
+            <version>1.0.4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.f2j</groupId>
+            <artifactId>arpack_combined_all</artifactId>
+            <version>0.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.netlib-java</groupId>
+            <artifactId>netlib-java</artifactId>
+            <version>1.1</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -108,6 +139,47 @@
                         </manifestEntries>
                     </archive>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.11.2</version>
+                <configuration>
+                    <doclint>none</doclint>
+                    <quiet>true</quiet>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>package-javadoc</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>javadoc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.6.2</version>
+                <executions>
+                    <execution>
+                        <id>standalone-no-spring</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <bannedDependencies>
+                                    <excludes>
+                                        <exclude>org.springframework:*</exclude>
+                                    </excludes>
+                                    <message>The Weka extension must remain independent of Spring.</message>
+                                </bannedDependencies>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

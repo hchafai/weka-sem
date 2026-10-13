@@ -2,7 +2,7 @@
 set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-ARCHIVE="$PROJECT_DIR/output/CompositeSEM-0.2.0.zip"
+ARCHIVE="$PROJECT_DIR/output/CompositeSEM-0.3.0.zip"
 DATA="$PROJECT_DIR/examples/composite-sem-demo.arff"
 COMPOSITE_SPEC="Activation=engagement,comments:2,sentiment;Reach=followers,views"
 COVARIANCE_SPEC="Activation=engagement,comments,sentiment;Reach=followers,views,frequency"
