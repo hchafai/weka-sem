@@ -6,6 +6,8 @@ import weka.core.Instance;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 
 /** Immutable fitted covariance-based SEM with an observed numeric outcome. */
 public final class CovarianceSemModel implements Serializable {
@@ -20,11 +22,17 @@ public final class CovarianceSemModel implements Serializable {
     private final double targetMean;
     private final double targetStandardDeviation;
     private final double[][] loadings;
+    private final double[][] standardizedLoadings;
     private final double[] residualVariances;
+    private final double[] standardizedResidualVariances;
     private final double[][] latentCovariance;
+    private final double[][] latentCorrelations;
     private final double[] structuralPaths;
+    private final double[] standardizedStructuralPaths;
     private final double targetResidualVariance;
+    private final double standardizedTargetResidualVariance;
     private final double[][] factorScoreCoefficients;
+    private final List<SemParameterEstimate> parameterEstimates;
     private final double chiSquare;
     private final int degreesOfFreedom;
     private final double chiSquarePValue;
@@ -49,11 +57,17 @@ public final class CovarianceSemModel implements Serializable {
             double targetMean,
             double targetStandardDeviation,
             double[][] loadings,
+            double[][] standardizedLoadings,
             double[] residualVariances,
+            double[] standardizedResidualVariances,
             double[][] latentCovariance,
+            double[][] latentCorrelations,
             double[] structuralPaths,
+            double[] standardizedStructuralPaths,
             double targetResidualVariance,
+            double standardizedTargetResidualVariance,
             double[][] factorScoreCoefficients,
+            List<SemParameterEstimate> parameterEstimates,
             double chiSquare,
             int degreesOfFreedom,
             double chiSquarePValue,
@@ -77,11 +91,17 @@ public final class CovarianceSemModel implements Serializable {
         this.targetMean = targetMean;
         this.targetStandardDeviation = targetStandardDeviation;
         this.loadings = SemMatrixOps.copy(loadings);
+        this.standardizedLoadings = SemMatrixOps.copy(standardizedLoadings);
         this.residualVariances = residualVariances.clone();
+        this.standardizedResidualVariances = standardizedResidualVariances.clone();
         this.latentCovariance = SemMatrixOps.copy(latentCovariance);
+        this.latentCorrelations = SemMatrixOps.copy(latentCorrelations);
         this.structuralPaths = structuralPaths.clone();
+        this.standardizedStructuralPaths = standardizedStructuralPaths.clone();
         this.targetResidualVariance = targetResidualVariance;
+        this.standardizedTargetResidualVariance = standardizedTargetResidualVariance;
         this.factorScoreCoefficients = SemMatrixOps.copy(factorScoreCoefficients);
+        this.parameterEstimates = List.copyOf(parameterEstimates);
         this.chiSquare = chiSquare;
         this.degreesOfFreedom = degreesOfFreedom;
         this.chiSquarePValue = chiSquarePValue;
@@ -99,6 +119,7 @@ public final class CovarianceSemModel implements Serializable {
         this.regularization = regularization;
     }
 
+    /** Scores one instance without consulting its class value. */
     public CovarianceSemScores score(Instance instance) {
         if (instance.dataset() == null) {
             throw new IllegalArgumentException("The instance must be attached to a Weka dataset header");
@@ -125,31 +146,69 @@ public final class CovarianceSemModel implements Serializable {
                 standardizedPrediction, targetMean + targetStandardDeviation * standardizedPrediction);
     }
 
+    /** Returns the fitted measurement specification. */
     public CompositeSpecification specification() { return specification; }
+    /** Returns indicator names in covariance-matrix order. */
     public String[] indicatorNames() { return indicatorNames.clone(); }
+    /** Returns training means used for scoring indicators. */
     public double[] indicatorMeans() { return indicatorMeans.clone(); }
+    /** Returns training sample standard deviations used for scoring indicators. */
     public double[] indicatorStandardDeviations() { return indicatorStandardDeviations.clone(); }
+    /** Returns the training target mean. */
     public double targetMean() { return targetMean; }
+    /** Returns the training target sample standard deviation. */
     public double targetStandardDeviation() { return targetStandardDeviation; }
+    /** Returns marker-identified loadings in the standardized-input parameterization. */
     public double[][] loadings() { return SemMatrixOps.copy(loadings); }
+    /** Returns completely standardized factor loadings. */
+    public double[][] standardizedLoadings() { return SemMatrixOps.copy(standardizedLoadings); }
+    /** Returns indicator residual variances in the standardized-input parameterization. */
     public double[] residualVariances() { return residualVariances.clone(); }
+    /** Returns completely standardized indicator residual variances. */
+    public double[] standardizedResidualVariances() { return standardizedResidualVariances.clone(); }
+    /** Returns latent covariances in the standardized-input parameterization. */
     public double[][] latentCovariance() { return SemMatrixOps.copy(latentCovariance); }
+    /** Returns the latent correlation matrix. */
+    public double[][] latentCorrelations() { return SemMatrixOps.copy(latentCorrelations); }
+    /** Returns paths in the standardized-input parameterization. */
     public double[] structuralPaths() { return structuralPaths.clone(); }
+    /** Returns completely standardized structural paths. */
+    public double[] standardizedStructuralPaths() { return standardizedStructuralPaths.clone(); }
+    /** Returns target residual variance in the standardized-input parameterization. */
     public double targetResidualVariance() { return targetResidualVariance; }
+    /** Returns completely standardized target residual variance. */
+    public double standardizedTargetResidualVariance() { return standardizedTargetResidualVariance; }
+    /** Returns original-scale estimates, observed-information inference, and std.all estimates. */
+    public List<SemParameterEstimate> parameterEstimates() { return parameterEstimates; }
+    /** Returns the normal-theory likelihood-ratio chi-square. */
     public double chiSquare() { return chiSquare; }
+    /** Returns model degrees of freedom. */
     public int degreesOfFreedom() { return degreesOfFreedom; }
+    /** Returns the chi-square survival probability. */
     public double chiSquarePValue() { return chiSquarePValue; }
+    /** Returns the comparative fit index. */
     public double cfi() { return cfi; }
+    /** Returns the Tucker-Lewis index. */
     public double tli() { return tli; }
+    /** Returns the root mean square error of approximation. */
     public double rmsea() { return rmsea; }
+    /** Returns the standardized root mean square residual. */
     public double srmr() { return srmr; }
+    /** Returns full-likelihood Akaike information criterion. */
     public double aic() { return aic; }
+    /** Returns full-likelihood Bayesian information criterion. */
     public double bic() { return bic; }
+    /** Returns explained variance of the observed numeric target. */
     public double rSquared() { return rSquared; }
+    /** Returns the number of complete-target training rows. */
     public int trainingRows() { return trainingRows; }
+    /** Returns optimizer iterations. */
     public int iterations() { return iterations; }
+    /** Returns whether the numerical convergence rule was satisfied. */
     public boolean converged() { return converged; }
+    /** Returns the infinity norm of the final discrepancy gradient. */
     public double gradientNorm() { return gradientNorm; }
+    /** Returns the covariance ridge used during parameter estimation. */
     public double regularization() { return regularization; }
 
     @Override
@@ -165,12 +224,23 @@ public final class CovarianceSemModel implements Serializable {
                 .append(", RMSEA=").append(rmsea).append(", SRMR=").append(srmr).append('\n');
         result.append("AIC=").append(aic).append(", BIC=").append(bic)
                 .append(", target R^2=").append(rSquared).append('\n');
-        result.append("Latent covariance:\n");
+        result.append("Latent covariance (standardized-input parameterization):\n");
         for (double[] row : latentCovariance) result.append(Arrays.toString(row)).append('\n');
         for (int construct = 0; construct < specification.constructs().size(); construct++) {
             result.append(specification.constructs().get(construct).name())
                     .append(" -> class: beta=").append(structuralPaths[construct])
                     .append(", loadings=").append(Arrays.toString(loadings[construct])).append('\n');
+        }
+        result.append("Fully standardized solution (std.all):\n");
+        result.append(String.format(Locale.ROOT, "%-26s %12s %12s %10s %12s %12s%n",
+                "parameter", "estimate", "std.error", "z", "p", "std.all"));
+        for (SemParameterEstimate parameter : parameterEstimates) {
+            result.append(String.format(Locale.ROOT, "%-26s %12.6f %12.6f %10.3f %12.6g %12.6f%n",
+                    parameter.label(), parameter.estimate(), parameter.standardError(),
+                    parameter.zStatistic(), parameter.pValue(), parameter.standardizedEstimate()));
+        }
+        if (parameterEstimates.isEmpty()) {
+            result.append("Parameter inference was disabled for this fit.\n");
         }
         return result.toString();
     }

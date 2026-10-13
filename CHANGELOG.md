@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.3.0 — 2026-10-13
+
+- Added original-scale estimates with observed-information standard errors,
+  Wald z statistics and two-sided p-values.
+- Added completely standardized loadings, paths, residual variances and latent
+  correlations.
+- Corrected chi-square scaling and added full normal-theory likelihood AIC/BIC.
+- Added lavaan 0.7-3 validation on Holzinger–Swineford 1939 and Political
+  Democracy with documented numerical tolerances.
+- Added prediction benchmarks against Weka LinearRegression, RandomForest and
+  the official partialLeastSquares package.
+- Added packaged Javadoc, an explicit Java 17 baseline, and a Maven rule that
+  bans Spring dependencies.
+- Refreshed GitHub Actions for Weka 3.8.7 and 3.9.6 and added reproducible
+  R/lavaan validation.
+
 ## 0.2.0 — 2026-10-13
 
 - Added maximum-likelihood covariance SEM for correlated reflective factors and

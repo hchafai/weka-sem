@@ -16,8 +16,9 @@ maximum-likelihood covariance SEM. It provides:
 - `weka.classifiers.functions.CovarianceSEMRegressor`, which jointly estimates
   a reflective measurement model and paths to a numeric outcome;
 - serializable Java models exposing loadings, error variances, latent covariance,
-  path coefficients, R-squared and the fit diagnostics applicable to each
-  estimator.
+  path coefficients, fully standardized estimates, observed-information
+  standard errors, z statistics, p-values, R-squared and the fit diagnostics
+  applicable to each estimator.
 
 The composite implementation uses fixed, user-supplied measurement weights and
 is not canonical iterative PLS-PM. The covariance implementation estimates
@@ -27,7 +28,7 @@ residual variance by minimizing the normal-theory ML discrepancy function.
 ## Installation
 
 CompositeSEM requires Java 17 or later and Weka 3.8.7 or later. Install the
-published release directly:
+published stable release directly:
 
 ```bash
 java -cp weka.jar weka.core.WekaPackageManager \
@@ -46,7 +47,7 @@ Then install the local archive:
 
 ```bash
 java -cp weka.jar weka.core.WekaPackageManager \
-  -install-package output/CompositeSEM-0.2.0.zip
+  -install-package output/CompositeSEM-0.3.0.zip
 ```
 
 The components then appear under Weka's supervised attribute filters, meta
@@ -123,8 +124,12 @@ java weka.Run weka.classifiers.functions.CovarianceSEMRegressor \
 ```
 
 The report includes chi-square and its degrees of freedom, CFI, TLI, RMSEA,
-SRMR, AIC, BIC, target R-squared, convergence state, loadings, latent covariance
-and structural paths. The corresponding filter is:
+SRMR, full-likelihood AIC and BIC, target R-squared, convergence state,
+loadings, latent covariance and structural paths. It also prints an
+original-scale parameter table with observed-Hessian standard errors, Wald z
+statistics, two-sided p-values and a completely standardized (`std.all`)
+solution. Use `-no-inference` when repeated resampling needs predictions but not
+an information matrix. The corresponding filter is:
 
 ```bash
 java weka.Run weka.filters.supervised.attribute.CovarianceSEMFilter \
@@ -136,15 +141,55 @@ Missing indicators are mean-imputed using training-set statistics. Missing
 classes are excluded from estimation. At scoring time the numeric class is not
 used: factor scores are regression scores computed from indicators only.
 
-## Scientific scope
+## Scientific validation
 
-Version 0.2 supports correlated reflective latent predictors with direct paths
-to one observed numeric outcome. It does reproduce the full indicator/outcome
+The covariance engine is cross-validated against `lavaan` 0.7-3 on two public
+SEM datasets: Holzinger–Swineford 1939 and Political Democracy. The automated
+tests compare loadings, structural paths, standard errors, z statistics,
+p-values, completely standardized estimates, chi-square, CFI, TLI, RMSEA,
+SRMR, AIC and BIC under documented numerical tolerances.
+
+Prediction is benchmarked using repeated ten-fold cross-validation against
+Weka `LinearRegression`, `RandomForest`, and the official
+`partialLeastSquares` package. Current deterministic results are:
+
+| Dataset | Model | RMSE | MAE | Correlation |
+| --- | --- | ---: | ---: | ---: |
+| Holzinger–Swineford | CovarianceSEMRegressor | 0.997 | 0.780 | 0.313 |
+| Holzinger–Swineford | LinearRegression | 0.995 | 0.793 | 0.317 |
+| Holzinger–Swineford | RandomForest | 1.017 | 0.819 | 0.281 |
+| Holzinger–Swineford | partialLeastSquares-SIMPLS | 1.008 | 0.798 | 0.286 |
+| Political Democracy | CovarianceSEMRegressor | 2.141 | 1.705 | 0.749 |
+| Political Democracy | LinearRegression | 2.226 | 1.747 | 0.726 |
+| Political Democracy | RandomForest | 2.205 | 1.801 | 0.730 |
+| Political Democracy | partialLeastSquares-SIMPLS | 2.320 | 1.855 | 0.701 |
+
+These benchmarks characterize prediction and do not claim universal
+superiority. Exact provenance, model syntax, seeds, tolerances, reference
+versions and regeneration commands are in [`validation/README.md`](validation/README.md).
+The synthetic [`examples/composite-sem-demo.arff`](examples/composite-sem-demo.arff)
+is only an installation smoke test and is never used as scientific evidence.
+
+To regenerate the independent reference, run every validation test, rebuild
+the prediction table and generate Javadoc:
+
+```bash
+scripts/run-scientific-validation.sh
+```
+
+Javadoc is generated under `target/reports/apidocs` and included as `doc/` in
+the Weka package archive. The standalone Maven build bans Spring dependencies;
+the extension does not depend on the HopeProject application.
+
+## Scientific scope and limits
+
+Version 0.3 supports correlated reflective latent predictors with direct paths
+to one observed numeric outcome. It reproduces the full indicator/outcome
 covariance matrix, but it does not yet parse arbitrary latent graphs, correlated
 measurement errors, ordinal estimators, multigroup models or FIML missing-data
-likelihoods. Fit does not establish causality. Before an official Weka repository
-submission, numerical results must be benchmarked against established SEM tools
-on published reference datasets.
+likelihoods. Fit does not establish causality. The included validation only
+covers the supported model family and must not be extrapolated to arbitrary SEM
+syntax.
 
 ## Citation
 

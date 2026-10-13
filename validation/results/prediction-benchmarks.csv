@@ -1,0 +1,9 @@
+dataset,model,repetitions,folds,rmse,mae,correlation
+holzinger-swineford-1939,CovarianceSEMRegressor,3,10,0.996683857,0.780200873,0.312879877
+holzinger-swineford-1939,LinearRegression,3,10,0.995246565,0.793477029,0.317157489
+holzinger-swineford-1939,RandomForest,3,10,1.016816448,0.818552972,0.280605000
+holzinger-swineford-1939,partialLeastSquares-SIMPLS,3,10,1.008273422,0.798293093,0.285990734
+political-democracy,CovarianceSEMRegressor,3,10,2.140640587,1.705379153,0.748506520
+political-democracy,LinearRegression,3,10,2.226423422,1.747335462,0.725519067
+political-democracy,RandomForest,3,10,2.204906079,1.800554341,0.729592771
+political-democracy,partialLeastSquares-SIMPLS,3,10,2.320138088,1.854836135,0.701166701

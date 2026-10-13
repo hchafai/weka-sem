@@ -23,6 +23,7 @@ public class CovarianceSEMRegressor extends AbstractClassifier implements Techni
     private double regularization = 1.0e-6;
     private int maximumIterations = 300;
     private double tolerance = 1.0e-6;
+    private boolean computeInference = true;
     private CovarianceSemModel model;
 
     public String globalInfo() {
@@ -39,7 +40,7 @@ public class CovarianceSEMRegressor extends AbstractClassifier implements Techni
         Instances training = new Instances(source);
         training.deleteWithMissingClass();
         model = new CovarianceSemEstimator().fit(training, CompositeSpecification.parse(constructs),
-                regularization, maximumIterations, tolerance);
+                regularization, maximumIterations, tolerance, computeInference);
     }
 
     @Override
@@ -71,6 +72,8 @@ public class CovarianceSEMRegressor extends AbstractClassifier implements Techni
                 "max-iterations", 1, "-max-iterations <integer>"));
         options.add(new Option("Optimization tolerance (default 1.0E-6).",
                 "tolerance", 1, "-tolerance <double>"));
+        options.add(new Option("Skip Hessian-based standard errors and Wald tests (useful in cross-validation).",
+                "no-inference", 0, "-no-inference"));
         return Collections.enumeration(options);
     }
 
@@ -84,6 +87,7 @@ public class CovarianceSEMRegressor extends AbstractClassifier implements Techni
         if (!value.isBlank()) setMaximumIterations(Integer.parseInt(value));
         value = Utils.getOption("tolerance", options);
         if (!value.isBlank()) setTolerance(Double.parseDouble(value));
+        setComputeInference(!Utils.getFlag("no-inference", options));
         Utils.checkForRemainingOptions(options);
     }
 
@@ -95,6 +99,7 @@ public class CovarianceSEMRegressor extends AbstractClassifier implements Techni
                 "-regularization", Double.toString(regularization),
                 "-max-iterations", Integer.toString(maximumIterations),
                 "-tolerance", Double.toString(tolerance));
+        if (!computeInference) options.add("-no-inference");
         return options.toArray(String[]::new);
     }
 
@@ -134,6 +139,9 @@ public class CovarianceSEMRegressor extends AbstractClassifier implements Techni
         }
         this.tolerance = tolerance;
     }
+    public String computeInferenceTipText() { return "Compute standard errors and Wald significance tests."; }
+    public boolean getComputeInference() { return computeInference; }
+    public void setComputeInference(boolean computeInference) { this.computeInference = computeInference; }
     public CovarianceSemModel getModel() { return model; }
 
     @Override
